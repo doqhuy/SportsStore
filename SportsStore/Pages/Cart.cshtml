@@ -1,0 +1,52 @@
+﻿@page
+@model CartModel
+<h2>This Is Your Cart</h2>
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Quantity</th>
+            <th>Item</th>
+            <th class="text-righ">Price</th>
+            <th class="text-right">SubTotal</th>
+            <th class="text-right">Action</th>
+        </tr>       
+    </thead>
+    <tbody>
+        @foreach( var line in Model?.Cart?.Lines ?? Enumerable.Empty<CartLine>())
+        {
+            <tr>
+                <td class="text-center">@line.Quantity</td>
+                <td class="text-center">@line.Product.Name</td>
+                <td class="text-center">@line.Product.Price.ToString("c")</td>
+                <td class="text-center">@((line.Quantity * line.Product.Price).ToString("c"))</td>
+                <th class="text-right">
+                    <form asp-page="/Cart" method="post">
+                        <input type="hidden" value="@line.Product.ProductId" name="productId" />
+                        <input type="hidden" name="handler" value="Remove" />
+                        <input type="hidden" value="@Model.ReturnUrl" name="returnUrl" />
+                        <button type="submit" class="btn btn-danger btn-sm">Remove Product</button>
+                    </form>
+                </th>
+            </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="3" class="text-right">Total:</td>
+            <td class="text-right">
+                @Model?.Cart?.ComputeTotalValue().ToString("c")
+            </td>
+        </tr>
+    </tfoot>
+</table>
+<div class="text-center">
+    <form asp-page="/Cart" method="post" class="my-3 ">
+        <input type="hidden" name="handler" value="RemoveAll" />
+        <input type="hidden" value="@Model.ReturnUrl" name="returnUrl" />
+        <button type="submit" class="btn btn-danger btn-sm ">Remove All Product</button>
+    </form>
+</div>
+<div class="text-center">
+    <a class="btn btn-primary mx-3" href="@Model?.ReturnUrl">Continue Shopping</a>
+</div>
+
